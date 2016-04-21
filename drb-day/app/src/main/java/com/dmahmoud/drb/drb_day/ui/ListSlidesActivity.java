@@ -1,23 +1,29 @@
 package com.dmahmoud.drb.drb_day.ui;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.dmahmoud.drb.drb_day.R;
 import com.dmahmoud.drb.drb_day.model.Slide;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class ListSlidesActivity extends AppCompatActivity {
@@ -28,39 +34,38 @@ public class ListSlidesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_slides);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        initSlideList();
     }
 
     void initSlideList(){
-        ListView slideList = (ListView) findViewById(R.id.list_slides);
+        final ListView slideList = (ListView) findViewById(R.id.list_slides);
 
-        ListSlideAdapter adapter = new ListSlideAdapter(this, )
-    }
+        //slideList.setAdapter(new ListSlideAdapter(this, getSlides()));
+        new AsyncTask<String, Integer, String>(){
 
-    private List<Slide> getSlides(){
+            @Override
+            protected String doInBackground(String... params) {
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpGet httpget = new HttpGet("http://192.168.1.101:3000/api/slides");
+                String result = null;
+                ResponseHandler<String> responseHandler = new BasicResponseHandler();
+                try {
+                    result = httpClient.execute(httpget, responseHandler);
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return result;
+            }
 
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpGet httpget = new HttpGet(url);
-        String result = null;
-        ResponseHandler<String> responseHandler = new BasicResponseHandler();
-        try {
-            result = httpClient.execute(httpget, responseHandler);
-        } catch (ClientProtocolException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return result;
+            @Override
+            protected void onPostExecute(String result) {
+                Gson gson = new GsonBuilder().create();
+                Type slideType = new TypeToken<List<Slide>>() {}.getType();
+                List<Slide> slides = gson.fromJson(result, slideType);
+                slideList.setAdapter(new ListSlideAdapter(ListSlidesActivity.this, slides));
+            }
+        }.execute();
     }
 }

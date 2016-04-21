@@ -9,7 +9,16 @@ public class Slide {
 
     String description;
 
+    String speaker;
+
     String image;
+
+    public Slide(String title, String description, String image, String speaker) {
+        this.title = title;
+        this.description = description;
+        this.image = image;
+        this.speaker = speaker;
+    }
 
     public String getTitle() {
         return title;
@@ -33,5 +42,13 @@ public class Slide {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getSpeaker() {
+        return speaker;
+    }
+
+    public void setSpeaker(String speaker) {
+        this.speaker = speaker;
     }
 }

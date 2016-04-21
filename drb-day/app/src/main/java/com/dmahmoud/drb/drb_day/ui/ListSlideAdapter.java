@@ -1,8 +1,12 @@
 package com.dmahmoud.drb.drb_day.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +17,9 @@ import android.widget.TextView;
 import com.dmahmoud.drb.drb_day.R;
 import com.dmahmoud.drb.drb_day.model.Slide;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -45,9 +52,8 @@ public class ListSlideAdapter extends ArrayAdapter<Slide> {
         Slide slide = getItem(position);
 
         viewHolder.title.setText(slide.getTitle());
-        viewHolder.desc.setText(slide.getDescription());
-        viewHolder.image.setImageDrawable(new ColorDrawable(Color.GRAY));
-
+        viewHolder.desc.setText(slide.getSpeaker());
+        new DownloadImageTask(viewHolder.image).execute("http://pipsum.com/100x100.jpg");
         return convertView;
     }
 
@@ -55,5 +61,31 @@ public class ListSlideAdapter extends ArrayAdapter<Slide> {
         public TextView title;
         public TextView desc;
         public ImageView image;
+    }
+
+    // From AndroidDeveloper
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 }
