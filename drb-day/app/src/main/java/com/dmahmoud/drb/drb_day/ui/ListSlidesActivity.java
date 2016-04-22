@@ -1,40 +1,30 @@
 package com.dmahmoud.drb.drb_day.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.dmahmoud.drb.drb_day.R;
 import com.dmahmoud.drb.drb_day.model.Slide;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.dmahmoud.drb.drb_day.service.DrbClient;
+import com.dmahmoud.drb.drb_day.service.RestClientListener;
 
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit.RetrofitError;
 
-public class ListSlidesActivity extends AppCompatActivity {
+public class ListSlidesActivity extends AppCompatActivity implements RestClientListener<List<Slide>> {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.list_slides)
     ListView slideList;
+
+    DrbClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +32,7 @@ public class ListSlidesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_slides);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        client = new DrbClient();
         initSlideList();
     }
 
@@ -52,31 +43,16 @@ public class ListSlidesActivity extends AppCompatActivity {
     }
 
     void initSlideList(){
-        new AsyncTask<String, Integer, String>(){
+        client.getSlides(this);
+    }
 
-            @Override
-            protected String doInBackground(String... params) {
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpGet httpget = new HttpGet("http://192.168.102.96:3000/api/slides");
-                String result = null;
-                ResponseHandler<String> responseHandler = new BasicResponseHandler();
-                try {
-                    result = httpClient.execute(httpget, responseHandler);
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return result;
-            }
+    @Override
+    public void onSuccess(List<Slide> object) {
+        slideList.setAdapter(new ListSlideAdapter(this, object));
+    }
 
-            @Override
-            protected void onPostExecute(String result) {
-                Gson gson = new GsonBuilder().create();
-                Type slideType = new TypeToken<List<Slide>>() {}.getType();
-                List<Slide> slides = gson.fromJson(result, slideType);
-                slideList.setAdapter(new ListSlideAdapter(ListSlidesActivity.this, slides));
-            }
-        }.execute();
+    @Override
+    public void onError(RetrofitError error) {
+        Toast.makeText(this, "Error occured, Aie !!" + error.getMessage(), Toast.LENGTH_SHORT).show();
     }
 }

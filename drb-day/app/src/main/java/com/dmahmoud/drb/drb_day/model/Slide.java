@@ -1,22 +1,29 @@
 package com.dmahmoud.drb.drb_day.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by djiddou on 4/20/16.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Slide {
 
+    @JsonProperty("title")
     String title;
 
+    @JsonProperty("description")
     String description;
 
+    @JsonProperty("speaker")
     String speaker;
 
-    String image;
+    public Slide() {
+    }
 
-    public Slide(String title, String description, String image, String speaker) {
+    public Slide(String title, String description, String speaker) {
         this.title = title;
         this.description = description;
-        this.image = image;
         this.speaker = speaker;
     }
 
@@ -34,14 +41,6 @@ public class Slide {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public String getSpeaker() {
