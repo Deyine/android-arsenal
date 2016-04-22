@@ -26,21 +26,32 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class ListSlidesActivity extends AppCompatActivity {
+
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.list_slides)
+    ListView slideList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_slides);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         initSlideList();
     }
 
-    void initSlideList(){
-        final ListView slideList = (ListView) findViewById(R.id.list_slides);
+    @Override
+    protected void onDestroy() {
+        ButterKnife.unbind(this);
+        super.onDestroy();
+    }
 
-        //slideList.setAdapter(new ListSlideAdapter(this, getSlides()));
+    void initSlideList(){
         new AsyncTask<String, Integer, String>(){
 
             @Override

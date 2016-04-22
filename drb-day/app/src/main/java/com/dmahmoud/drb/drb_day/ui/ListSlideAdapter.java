@@ -22,6 +22,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Created by djiddou on 4/20/16.
  */
@@ -42,10 +45,7 @@ public class ListSlideAdapter extends ArrayAdapter<Slide> {
 
         SlideViewHolder viewHolder = (SlideViewHolder) convertView.getTag();
         if(viewHolder == null){
-            viewHolder = new SlideViewHolder();
-            viewHolder.title = (TextView) convertView.findViewById(R.id.slide_title);
-            viewHolder.desc = (TextView) convertView.findViewById(R.id.slide_desc);
-            viewHolder.image = (ImageView) convertView.findViewById(R.id.slide_image);
+            viewHolder = new SlideViewHolder(convertView);
             convertView.setTag(viewHolder);
         }
 
@@ -58,9 +58,16 @@ public class ListSlideAdapter extends ArrayAdapter<Slide> {
     }
 
     private class SlideViewHolder{
+        @Bind(R.id.slide_title)
         public TextView title;
+        @Bind(R.id.slide_desc)
         public TextView desc;
+        @Bind(R.id.slide_image)
         public ImageView image;
+
+        public SlideViewHolder(View view) {
+            ButterKnife.bind(view);
+        }
     }
 
     // From AndroidDeveloper
