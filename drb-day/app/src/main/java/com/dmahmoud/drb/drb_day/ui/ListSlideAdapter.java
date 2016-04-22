@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.dmahmoud.drb.drb_day.R;
 import com.dmahmoud.drb.drb_day.model.Slide;
 
@@ -53,7 +54,9 @@ public class ListSlideAdapter extends ArrayAdapter<Slide> {
 
         viewHolder.title.setText(slide.getTitle());
         viewHolder.desc.setText(slide.getSpeaker());
-        new DownloadImageTask(viewHolder.image).execute("http://pipsum.com/100x100.jpg");
+        Glide.with(getContext())
+                .load("http://pipsum.com/100x100.jpg")
+                .into(viewHolder.image);
         return convertView;
     }
 
@@ -67,32 +70,6 @@ public class ListSlideAdapter extends ArrayAdapter<Slide> {
 
         public SlideViewHolder(View view) {
             ButterKnife.bind(view);
-        }
-    }
-
-    // From AndroidDeveloper
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
         }
     }
 }

@@ -29,5 +29,9 @@ dependencies {
 
     compile 'com.google.code.gson:gson:2.6.2'
 
+    // Architecture
     compile 'com.jakewharton:butterknife:7.0.1'
+
+    // Image Processing
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 }
