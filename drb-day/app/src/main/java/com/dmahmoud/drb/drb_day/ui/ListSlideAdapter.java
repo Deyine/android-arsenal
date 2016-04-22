@@ -57,7 +57,7 @@ public class ListSlideAdapter extends ArrayAdapter<Slide> {
         return convertView;
     }
 
-    private class SlideViewHolder{
+    static class SlideViewHolder{
         @Bind(R.id.slide_title)
         public TextView title;
         @Bind(R.id.slide_desc)
@@ -66,7 +66,7 @@ public class ListSlideAdapter extends ArrayAdapter<Slide> {
         public ImageView image;
 
         public SlideViewHolder(View view) {
-            ButterKnife.bind(view);
+            ButterKnife.bind(this, view);
         }
     }
 

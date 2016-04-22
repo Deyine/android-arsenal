@@ -57,7 +57,7 @@ public class ListSlidesActivity extends AppCompatActivity {
             @Override
             protected String doInBackground(String... params) {
                 HttpClient httpClient = new DefaultHttpClient();
-                HttpGet httpget = new HttpGet("http://192.168.1.101:3000/api/slides");
+                HttpGet httpget = new HttpGet("http://192.168.102.96:3000/api/slides");
                 String result = null;
                 ResponseHandler<String> responseHandler = new BasicResponseHandler();
                 try {
